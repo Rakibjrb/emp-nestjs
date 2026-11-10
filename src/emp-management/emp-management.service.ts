@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { IEmployee } from './emp-management.interface.js';
 import { CreateEmpsDto } from './dto/create-emps.dto.js';
 
@@ -29,7 +33,7 @@ export class EmpManagementService {
     },
   ];
 
-  private id = 3;
+  private id = this.employees.length + 1;
 
   getAll(query: { role: IEmployee['role']; search: string }) {
     let employees = this.employees;
@@ -60,6 +64,16 @@ export class EmpManagementService {
   }
 
   createEmp(payload: CreateEmpsDto) {
+    const exist = this.employees.find(
+      (emp) => emp.email.toLowerCase() === payload.email.toLowerCase(),
+    );
+
+    if (exist) {
+      throw new ConflictException(
+        `Employee already exists with this email : ${payload.email}`,
+      );
+    }
+
     const newEmp: IEmployee = {
       id: this.id++,
       ...payload,
