@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IEmployee } from './emp-management.interface.js';
+import { CreateEmpsDto } from './dto/create-emps.dto.js';
 
 @Injectable()
 export class EmpManagementService {
@@ -10,7 +11,7 @@ export class EmpManagementService {
       email: 'rakibul@gmail.com',
       image: 'https://randomuser.me/api/portraits/men/69.jpg',
       department: 'Software Development',
-      role: 'Manager',
+      role: 'admin',
       position: 'Software Developer',
       createdAt: '2026-07-10T10:00:00Z',
       updatedAt: '2026-07-10T10:00:00Z',
@@ -21,15 +22,31 @@ export class EmpManagementService {
       email: 'abu@gmail.com',
       image: 'https://randomuser.me/api/portraits/men/69.jpg',
       department: 'Web Development',
-      role: 'Employee',
-      position: 'Web Developer',
+      role: 'manager',
+      position: 'Team Lead',
       createdAt: '2026-07-20T10:00:00Z',
       updatedAt: '2026-07-20T10:00:00Z',
     },
   ];
 
-  getAll() {
-    return this.employees;
+  private id = 3;
+
+  getAll(query: { role: IEmployee['role']; search: string }) {
+    let employees = this.employees;
+
+    if (query.role) {
+      employees = employees.filter((emp) => emp.role === query.role);
+    }
+
+    if (query.search) {
+      employees = employees.filter(
+        (emp) =>
+          emp.name.toLowerCase().startsWith(query.search.toLowerCase()) ||
+          emp.email.toLowerCase().startsWith(query.search.toLowerCase()),
+      );
+    }
+
+    return employees;
   }
 
   getById(id: IEmployee['id']) {
@@ -40,5 +57,19 @@ export class EmpManagementService {
     }
 
     return found;
+  }
+
+  createEmp(payload: CreateEmpsDto) {
+    const newEmp: IEmployee = {
+      id: this.id++,
+      ...payload,
+      image: 'https://randomuser.me/api/portraits/men/69.jpg',
+      role: 'employee',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.employees.push(newEmp);
+    return newEmp;
   }
 }

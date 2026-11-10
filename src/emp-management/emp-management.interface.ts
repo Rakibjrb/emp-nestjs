@@ -5,7 +5,7 @@ export interface IEmployee {
   image: string;
   department: string;
   position: string;
-  role: 'Employee' | 'Manager' | 'Admin';
+  role: 'employee' | 'manager' | 'admin';
   createdAt: string;
   updatedAt: string;
 }

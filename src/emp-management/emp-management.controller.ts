@@ -1,17 +1,35 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { EmpManagementService } from './emp-management.service.js';
+import { IEmployee } from './emp-management.interface.js';
+import { CreateEmpsDto } from './dto/create-emps.dto.js';
 
 @Controller('employees')
 export class EmpManagementController {
   constructor(private empService: EmpManagementService) {}
 
   @Get()
-  getAll() {
-    return this.empService.getAll();
+  getAll(
+    @Query('role') role: IEmployee['role'],
+    @Query('search') search: string,
+  ) {
+    return this.empService.getAll({ role, search });
   }
 
   @Get('/:id')
   getById(@Param('id', ParseIntPipe) id: number) {
     return this.empService.getById(id);
+  }
+
+  @Post()
+  createEmp(@Body() createEmpDto: CreateEmpsDto) {
+    return this.empService.createEmp(createEmpDto);
   }
 }
