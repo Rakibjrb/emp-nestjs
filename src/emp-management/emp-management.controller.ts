@@ -6,11 +6,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { EmpManagementService } from './emp-management.service.js';
 import { IEmployee } from './emp-management.interface.js';
 import { CreateEmpsDto } from './dto/create-emps.dto.js';
+import { UpdateEmpsDto } from './dto/update-emps.dto.js';
 
 @Controller('employees')
 export class EmpManagementController {
@@ -32,6 +34,14 @@ export class EmpManagementController {
   @Post()
   createEmp(@Body() createEmpDto: CreateEmpsDto) {
     return this.empService.createEmp(createEmpDto);
+  }
+
+  @Put('/:id')
+  updateEmp(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEmpsDto: UpdateEmpsDto,
+  ) {
+    return this.empService.updateEmp(id, updateEmpsDto);
   }
 
   @Delete('/:id')
