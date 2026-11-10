@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -31,5 +32,10 @@ export class EmpManagementController {
   @Post()
   createEmp(@Body() createEmpDto: CreateEmpsDto) {
     return this.empService.createEmp(createEmpDto);
+  }
+
+  @Delete('/:id')
+  deleteEmp(@Param('id', ParseIntPipe) id: number) {
+    return this.empService.deleteEmp(id);
   }
 }

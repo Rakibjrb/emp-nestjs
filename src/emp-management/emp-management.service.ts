@@ -86,4 +86,45 @@ export class EmpManagementService {
     this.employees.push(newEmp);
     return newEmp;
   }
+
+  updateEmp(id: IEmployee['id'], payload: Partial<CreateEmpsDto>) {
+    const index = this.employees.findIndex((emp) => emp.id === id);
+
+    if (index === -1) {
+      throw new NotFoundException(`Employee not found with this id : ${id}`);
+    }
+
+    if (payload.email) {
+      const duplicate = this.employees.find(
+        (emp) =>
+          emp.id !== id &&
+          emp.email.toLowerCase() === payload.email!.toLowerCase(),
+      );
+
+      if (duplicate) {
+        throw new ConflictException(
+          `Employee already exists with this email : ${payload.email}`,
+        );
+      }
+    }
+
+    this.employees[index] = {
+      ...this.employees[index],
+      ...payload,
+      updatedAt: new Date().toISOString(),
+    };
+
+    return this.employees[index];
+  }
+
+  deleteEmp(id: IEmployee['id']) {
+    const index = this.employees.findIndex((emp) => emp.id === id);
+
+    if (index === -1) {
+      throw new NotFoundException(`Employee not found with this id : ${id}`);
+    }
+
+    const [deleted] = this.employees.splice(index, 1);
+    return deleted;
+  }
 }
